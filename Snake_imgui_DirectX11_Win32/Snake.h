@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "imgui.h"
 #include "Food.h"
+#include "Game.h"
 
 struct SnakeNode
 {
@@ -42,7 +43,7 @@ private:
 
 	float speed; // 蛇的移动速度
 
-	enum Status { DEAD, ALIVE } status; // 蛇是否活着
+	//enum Status { DEAD, ALIVE } status; // 蛇是否活着
 
 	void RemoveTail(); // 去除尾部节点
 

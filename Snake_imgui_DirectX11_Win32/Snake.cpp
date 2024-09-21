@@ -1,12 +1,9 @@
 ﻿#include "Snake.h"
 
 // 构造函数，初始化蛇的属性
-Snake::Snake()
+Snake::Snake() :length(3), direction(RIGHT), speed(1.0f)
 {
-	length = 3; // 初始长度为 3
-	direction = RIGHT; // 初始方向向右
-	speed = 1.0f; // 初始速度为 1.0格/秒
-	status = ALIVE; // 初始蛇活着
+	//status = ALIVE; // 初始蛇活着
 
 	// 创建蛇头节点
 	head = new SnakeNode{ 10, 10, nullptr };
@@ -26,8 +23,8 @@ bool Snake::CheckCollision()
 	ImVec2 headPos = GetHeadPos();
 
 	// 1. 蛇头与墙壁的碰撞
-	if (headPos.x < 0 || headPos.x >= GRID_WIDTH ||
-		headPos.y < 0 || headPos.y >= GRID_HEIGHT) {
+	if (headPos.x < 0 || headPos.x >= GRID_WIDTH - 1 ||
+		headPos.y < 0 || headPos.y >= GRID_HEIGHT - 1) {
 		return true; // 撞墙
 	}
 
