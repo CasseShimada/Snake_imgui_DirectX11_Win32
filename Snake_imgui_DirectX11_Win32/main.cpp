@@ -173,8 +173,6 @@ int main(int, char**)
 			}ImGui::End();
 		}
 
-
-
 		if (gameStart == true)
 		{
 
@@ -183,19 +181,15 @@ int main(int, char**)
 			if (ImGui::Begin(_S("舞台"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)) {
 				// 游戏舞台窗口
 
-
-
 				game->Update();
 				if (game->CheckGameOver() && ImGui::IsKeyDown(ImGuiKey_Escape))
 				{
 					gameStart = false;
 				}
 
-
 			}ImGui::End();
 
 		}
-
 
 		// ———————————————————————— 自定义窗口 ————————————————————————
 
