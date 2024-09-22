@@ -5,6 +5,7 @@
 #include "Snake.h"
 
 #include "imgui.h"
+#define _S(_LITERAL)    (const char*)u8##_LITERAL
 
 class Food;
 class Snake;

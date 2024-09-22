@@ -103,6 +103,8 @@ int main(int, char**)
 	const char* secret_code = _S("邀请码");
 	char input_buffer[128] = "";
 
+	bool show_error_popup = false;
+
 	Game* game = new Game();
 
 	// 游戏设置
@@ -218,6 +220,7 @@ int main(int, char**)
 
 				//ImGui::Checkbox(_S("游戏状态"), &gameStart);
 
+
 				if (ImGui::TreeNodeEx(_S("游戏开始"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
 					ImGui::InputText(_S("请输入邀请码"), input_buffer, IM_ARRAYSIZE(input_buffer));
@@ -225,16 +228,32 @@ int main(int, char**)
 					{
 						if (strcmp(input_buffer, secret_code) == 0)
 						{
+							show_error_popup = false;
 							game->SyncGameSettings(speed, grid_size, cell_size, grid_color, snake_color);
 							game->Reset();
 							gameStart = true;
 							game->Start();
+						}
+						else {
+							show_error_popup = true;
 						}
 					}
 					ImGui::TreePop();
 				}
 
 
+			}ImGui::End();
+		}
+
+		if (show_error_popup) {
+			ImGui::SetNextWindowSize(ImVec2(250.0f, 166.0f));
+			if (ImGui::Begin(_S("啊:<"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+			{
+				ImGui::Text(_S("输入错误，请使用脑子"));
+				if (ImGui::Button(_S("好的")))
+				{
+					show_error_popup = false;
+				}
 			}ImGui::End();
 		}
 

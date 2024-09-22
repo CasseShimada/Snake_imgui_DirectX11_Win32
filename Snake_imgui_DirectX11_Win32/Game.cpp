@@ -11,6 +11,7 @@ void Game::Start()
 {
 	gameOver = false;
 	pause = false;
+	direction = UP;
 	timer.Start();
 	RefreshFood();
 }
@@ -39,6 +40,23 @@ void Game::Update()
 		if (ImGui::IsKeyDown(ImGuiKey_Escape))
 		{
 			pause = !pause;
+		}
+		if (pause)
+		{
+			ImGui::SetNextWindowSize(ImVec2(300.0f, 200.0f));
+			if (ImGui::Begin(_S("暂停"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
+			{
+				ImGui::Text(_S("游戏已暂停"));
+				if (ImGui::Button(_S("继续")))
+				{
+					pause = false;
+				}
+				ImGui::SameLine();
+				if (ImGui::Button(_S("结束游戏")))
+				{
+					gameOver = true;
+				}
+			}ImGui::End();
 		}
 		if (!pause)
 		{
@@ -194,14 +212,13 @@ void Game::RefreshFood()
 	//std::uniform_int_distribution<> dis_x(0, 20);
 	//std::uniform_int_distribution<> dis_y(0, 20);
 
-	// 生成新的食物坐标
-	std::pair<int, int> new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
+	std::pair<int, int> new_food_pos;
 
 	bool overlap = true; // 假设初始情况下食物与蛇重叠
 	while (overlap)
 	{
-		// 生成新的食物坐标
-		std::pair<int, int> new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
+		// 生成食物坐标
+		new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
 
 		// 检查新坐标是否与蛇身重叠
 		overlap = false;
