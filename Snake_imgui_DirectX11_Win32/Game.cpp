@@ -2,7 +2,7 @@
 #include <random>
 
 // 构造函数
-Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), direction(RIGHT)
+Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), snake_color(0), direction(RIGHT), pause(false)
 {
 
 }
@@ -10,13 +10,16 @@ Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_m
 void Game::Start()
 {
 	gameOver = false;
+	pause = false;
 	timer.Start();
+	RefreshFood();
 }
 
 void Game::Reset()
 {
 
 	gameOver = true;
+	pause = false;
 	score = 0;
 	snake_move_interval = 1.0f / game_settings.speed;
 	max_length = game_settings.grid_size.first * game_settings.grid_size.second;
@@ -32,24 +35,54 @@ void Game::Update()
 {
 	if (gameOver == false)
 	{
-		if (timer.GetElapsedSeconds() >= snake_move_interval) // 蛇移动
+		if (ImGui::IsKeyDown(ImGuiKey_Escape))
 		{
-			// 移动蛇
-			if (CheckSnakeEat()) // 蛇吃到东西
+			pause = !pause;
+		}
+		if (!pause)
+		{
+			if (direction != DOWN && ImGui::IsKeyDown(ImGuiKey_GamepadDpadUp))
 			{
-				GrowSnake();
-				if (snake.GetLength() == max_length)
-				{
-					gameOver = true;
-				}
+				direction = UP;
 			}
-			else
-				MoveSnake();
-
-			// 判断蛇是否撞死
-			if (CheckCollision()) // 蛇撞死了
+			else if (direction != UP && ImGui::IsKeyDown(ImGuiKey_GamepadDpadDown))
 			{
-				gameOver = true;
+				direction = DOWN;
+			}
+			else if (direction != RIGHT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadLeft))
+			{
+				direction = LEFT;
+			}
+			else if (direction != LEFT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadRight))
+			{
+				direction = RIGHT;
+			}
+			if (timer.GetElapsedSeconds() >= snake_move_interval) // 蛇移动
+			{
+				timer.Start();
+				// 移动蛇
+				if (CheckSnakeEat()) // 蛇吃到东西
+				{
+					GrowSnake(); // 生长
+
+					// 判断蛇是否充满了整个画面
+					if (snake.GetLength() == max_length) // 蛇充满了整个画面
+					{
+						gameOver = true; // 游戏结束
+					}
+					else
+					{
+						RefreshFood();
+					}
+				}
+				else
+					MoveSnake(); // 蛇移动一次
+
+				// 判断蛇是否撞死
+				if (CheckCollision()) // 蛇撞死了
+				{
+					gameOver = true; // 游戏结束
+				}
 			}
 		}
 
@@ -61,6 +94,8 @@ void Game::Update()
 				DrawGrid(game_settings.cell_size, i, j, grid_color, false);
 			}
 		}
+
+		DrawFood();
 
 		// 绘制蛇
 		DrawSnake();
@@ -110,6 +145,11 @@ void Game::DrawSnake()
 	}
 }
 
+void Game::DrawFood()
+{
+	DrawGrid(game_settings.cell_size, food.GetFoodPosition().first, food.GetFoodPosition().second, grid_color, true);
+}
+
 void Game::DrawEndScreen()
 {
 
@@ -147,14 +187,19 @@ void Game::GrowSnake()
 void Game::RefreshFood()
 {
 
+	std::random_device rd;  // 获取随机数种子
+	std::mt19937 gen(rd()); // 创建随机数生成器
+	//std::uniform_int_distribution<> dis_x(0, game_settings.grid_size.first);
+	//std::uniform_int_distribution<> dis_y(0, game_settings.grid_size.second);
+	std::uniform_int_distribution<> dis_x(0, 20);
+	std::uniform_int_distribution<> dis_y(0, 20);
+
+	// 生成新的食物坐标
+	std::pair<int, int> new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
+
 	bool overlap = true; // 假设初始情况下食物与蛇重叠
 	while (overlap)
 	{
-		std::random_device rd;  // 获取随机数种子
-		std::mt19937 gen(rd()); // 创建随机数生成器
-		std::uniform_int_distribution<> dis_x(0, game_settings.grid_size.first);
-		std::uniform_int_distribution<> dis_y(0, game_settings.grid_size.second);
-
 		// 生成新的食物坐标
 		std::pair<int, int> new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
 
@@ -172,6 +217,8 @@ void Game::RefreshFood()
 			current = current->next;
 		}
 	}
+
+	food.SetFoodPosition(new_food_pos);
 }
 
 // 获取下一次移动蛇头位置
@@ -236,5 +283,10 @@ void Game::SyncGameSettings(int speed, std::pair<int, int> grid_size, int cell_s
 	game_settings.cell_size = cell_size;
 	game_settings.grid_color = grid_color;
 	game_settings.snake_color = snake_color;
+}
+
+bool Game::CheckGameOver()
+{
+	return gameOver;
 }
 

@@ -36,6 +36,7 @@ public:
 	// 渲染
 	void DrawGrid(int, int, int, const ImU32, const bool); // 绘制格子
 	void DrawSnake();
+	void DrawFood();
 	void DrawEndScreen();
 
 	// 工具
@@ -48,6 +49,7 @@ public:
 
 	// 同步设置
 	void SyncGameSettings(int, std::pair<int, int>, int, ImVec4, ImVec4);
+	bool CheckGameOver();
 
 private:
 
@@ -65,6 +67,7 @@ private:
 	int score; // 得分
 	bool gameOver; // 游戏结束的标志
 	int max_length;
+	bool pause;
 
 	// 玩家控制
 	enum Direction { UP, DOWN, LEFT, RIGHT } direction; // 蛇的移动方向

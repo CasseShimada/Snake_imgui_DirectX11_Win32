@@ -99,9 +99,9 @@ int main(int, char**)
 	// 游戏设置
 	bool gameStart = false; // 游戏是否开始
 
-	int speed = 0; // 速度
+	int speed = 2; // 速度
 	std::pair<int, int> grid_size = std::pair<int, int>(20, 20); // 舞台尺寸
-	int cell_size = 15; // 格子大小
+	int cell_size = 25; // 格子大小
 	ImVec4 grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); // 格子颜色
 	ImVec4 snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); // 格子颜色
 
@@ -183,8 +183,13 @@ int main(int, char**)
 			if (ImGui::Begin(_S("舞台"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)) {
 				// 游戏舞台窗口
 
-				game->Update();
 
+
+				game->Update();
+				if (game->CheckGameOver() && ImGui::IsKeyDown(ImGuiKey_Escape))
+				{
+					gameStart = false;
+				}
 
 
 			}ImGui::End();
