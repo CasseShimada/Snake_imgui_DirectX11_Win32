@@ -27,5 +27,5 @@ double Timer::GetElapsedSeconds() const
 
 void Timer::Reset()
 {
-	isRunning = false;
+	Stop();
 }

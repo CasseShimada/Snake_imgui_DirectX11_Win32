@@ -97,10 +97,13 @@ int main(int, char**)
 	Game* game = new Game();
 
 	// 游戏设置
-	int speed = 0; // 速度
 	bool gameStart = false; // 游戏是否开始
-	std::pair<int, int> grid_size = std::pair<int, int>(20,20); // 舞台尺寸
+
+	int speed = 0; // 速度
+	std::pair<int, int> grid_size = std::pair<int, int>(20, 20); // 舞台尺寸
 	int cell_size = 15; // 格子大小
+	ImVec4 grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); // 格子颜色
+	ImVec4 snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); // 格子颜色
 
 	// Main loop
 	bool done = false;
@@ -143,25 +146,34 @@ int main(int, char**)
 
 		// ———————————————————————— 自定义窗口 ————————————————————————
 
-		ImGui::SetNextWindowSize(ImVec2(600.0f, 600.0f));
+		ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f));
 		if (gameStart == false)
 		{
-			if (ImGui::Begin(_S("游戏设置"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-				// 主界面、设置
+			if (ImGui::Begin(_S("游戏设置"), NULL, ImGuiWindowFlags_NoResize | // 游戏设置窗口
+				ImGuiWindowFlags_NoCollapse)) {
+
 				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 10, 30);
 				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 10, 30);
 				ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
+				ImGui::ColorEdit3(_S("格子颜色"), (float*)&grid_color);
+				ImGui::ColorEdit3(_S("蛇颜色"), (float*)&snake_color);
 
 				ImGui::SliderInt(_S("速度"), &speed, 1, 5);
 
-				ImGui::Checkbox(_S("游戏状态"), &gameStart);
+				//ImGui::Checkbox(_S("游戏状态"), &gameStart);
+
 				if (ImGui::Button(_S("开始游戏")))
 				{
+					game->SyncGameSettings(speed, grid_size, cell_size, grid_color, snake_color);
+					game->Reset();
 					gameStart = true;
+					game->Start();
 				}
 
 			}ImGui::End();
 		}
+
+
 
 		if (gameStart == true)
 		{
@@ -169,15 +181,11 @@ int main(int, char**)
 			ImGui::SetNextWindowSize(ImVec2(static_cast<float>(grid_size.first * cell_size),
 				static_cast<float>(grid_size.second * cell_size)));
 			if (ImGui::Begin(_S("舞台"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)) {
-				// 游戏窗口
+				// 游戏舞台窗口
 
-				for (int i = 0; i < grid_size.first; i++)
-				{
-					for (int j = 0; j < grid_size.second; j++)
-					{
-						game->drawCell(cell_size, i, j, ImVec4(1, 1, 1, 1), false);
-					}
-				}
+				game->Update();
+
+
 
 			}ImGui::End();
 

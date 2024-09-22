@@ -1,10 +1,14 @@
 ﻿#include "Snake.h"
 
 // 构造函数，初始化蛇的属性
-Snake::Snake() :length(3), direction(RIGHT), speed(1.0f)
+Snake::Snake() :length(3)
 {
-	//status = ALIVE; // 初始蛇活着
+	Generate();
+}
 
+// 创建新的蛇（长度3）
+void Snake::Generate()
+{
 	// 创建蛇头节点
 	head = new SnakeNode{ 10, 10, nullptr };
 
@@ -17,92 +21,31 @@ Snake::Snake() :length(3), direction(RIGHT), speed(1.0f)
 	second->next = third;
 }
 
-// 碰撞检测（撞墙、撞蛇身）
-bool Snake::CheckCollision(std::pair<int, int> grid)
+// 删除旧的蛇
+void Snake::Delete()
 {
-	std::pair<int, int> headPos = GetHeadPos();
-
-	// 1. 蛇头与墙壁的碰撞
-	if (headPos.first < 0 || headPos.first >= grid.first ||
-		headPos.second < 0 || headPos.second >= grid.second) {
-		return true; // 撞墙
-	}
-
-	// 2. 蛇头与自身的碰撞
-	SnakeNode* current = head->next; // 从第二个节点开始遍历
-	while (current != nullptr) {
-		if (current->x == headPos.first && current->y == headPos.second) {
-			return true; // 撞到自己
-		}
+	SnakeNode* current = head;
+	head = NULL;
+	while (current != NULL) {
+		SnakeNode* temp = current;
 		current = current->next;
+		delete temp;
 	}
-
-	return false; // 未发生碰撞
 }
 
-// 蛇移动
-void Snake::Move(std::pair<int, int> nextHeadPos)
+// 重置蛇状态
+void Snake::Reset()
 {
-	SnakeNode* newHead = new SnakeNode{ static_cast<int>(nextHeadPos.first),
-				static_cast<int>(nextHeadPos.second), nullptr };
+	Delete();
+	Generate();
 
-	newHead->next = head; // 将新头节点连接到当前头节点之前
-	head = newHead; // 更新头节点为新头节点
-
-	RemoveTail(); // 删除尾节点
+	length = 3;
 }
 
-//// 移动蛇
-//void Snake::Move(Food& food)
-//{
-//	ImVec2 nextHeadPos = GetHeadNextPos();
-//
-//	if (CheckCollision()) { // 判断蛇是否撞死
-//		// 移动
-//		SnakeNode* newHead = new SnakeNode{ static_cast<int>(nextHeadPos.x),
-//				static_cast<int>(nextHeadPos.y), nullptr };
-//
-//		newHead->next = head; // 将新头节点连接到当前头节点之前
-//		head = newHead; // 更新头节点为新头节点
-//
-//		RemoveTail(); // 删除尾节点
-//
-//		// 撞死
-//		status = DEAD;
-//	}
-//	else {
-//		// 判断下一步是否会碰到食物
-//		if (nextHeadPos.x == food.GetFoodPosition().x &&
-//			nextHeadPos.y == food.GetFoodPosition().y) {
-//
-//			// 会碰到食物，增长
-//			Grow(nextHeadPos); // 在蛇头添加新节点
-//			food.RefreshFood(*this); // 生成新的食物
-//
-//		}
-//		else {
-//			// 不会碰到食物，移动
-//			SnakeNode* newHead = new SnakeNode{ static_cast<int>(nextHeadPos.x),
-//				static_cast<int>(nextHeadPos.y), nullptr };
-//
-//			newHead->next = head;
-//			head = newHead;
-//
-//			RemoveTail();
-//		}
-//	}
-//}
-
-// 蛇生长
-void Snake::Grow(std::pair<int, int>& next)
+// 编辑蛇长
+void Snake::ModifyLength(int modifier)
 {
-	SnakeNode* newHead = new SnakeNode{ static_cast<int>(next.first),
-		static_cast<int>(next.second), nullptr };
-
-	newHead->next = head; // 将新头节点连接到当前头节点之前
-	head = newHead; // 更新头节点为新头节点
-
-	length++;
+	length += modifier;
 }
 
 // 获取蛇头坐标
@@ -111,46 +54,24 @@ std::pair<int, int> Snake::GetHeadPos() const
 	return std::pair<int, int>(head->x, head->y);
 }
 
-// 获取蛇头结点
+// 获取蛇头节点
 SnakeNode* Snake::GetHeadNode() const
 {
 	return head;
 }
 
-// 获取蛇的长度
+void Snake::SetHeadNode(SnakeNode* new_head)
+{
+	head = new_head;
+}
+
+// 获取蛇长
 int Snake::GetLength() const
 {
 	return length;
 }
 
-// 获取下一次移动蛇头位置
-std::pair<int, int> Snake::GetHeadNextPos() const
-{
-	std::pair<int, int> nextHeadPos = GetHeadPos(); // 获取当前蛇头坐标
-
-	// 计算下一步蛇头坐标
-	switch (direction) {
-	case UP:
-		nextHeadPos.first = head->x;
-		nextHeadPos.second = head->y - 1; // 向上移动，y 坐标减 1
-		break;
-	case DOWN:
-		nextHeadPos.first = head->x;
-		nextHeadPos.second = head->y + 1; // 向下移动，y 坐标加 1
-		break;
-	case LEFT:
-		nextHeadPos.first = head->x - 1; // 向左移动，x 坐标减 1
-		nextHeadPos.second = head->y;
-		break;
-	case RIGHT:
-		nextHeadPos.first = head->x + 1; // 向右移动，x 坐标加 1
-		nextHeadPos.second = head->y;
-		break;
-	}
-
-	return nextHeadPos;
-}
-
+// 删除蛇的最后一个节点
 void Snake::RemoveTail()
 {
 	//if (head == nullptr || head->next == nullptr) { 
