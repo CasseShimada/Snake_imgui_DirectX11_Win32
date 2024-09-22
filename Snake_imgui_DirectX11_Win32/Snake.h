@@ -1,7 +1,5 @@
 ﻿#pragma once
-#include "imgui.h"
-#include "Food.h"
-#include "Game.h"
+#include <utility>
 
 struct SnakeNode
 {
@@ -16,20 +14,20 @@ public:
 
 	Snake(); // 构造函数，初始化蛇的属性
 
-	void Move(ImVec2); // 移动蛇
+	void Move(std::pair<int, int>); // 移动蛇
 	//void Move(Food&);
 
-	void Grow(ImVec2&); // 蛇生长
+	void Grow(std::pair<int, int>&); // 蛇生长
 
-	bool CheckCollision(); // 碰撞检测（撞墙、撞蛇身）
+	bool CheckCollision(std::pair<int, int>); // 碰撞检测（撞墙、撞蛇身）
 
-	ImVec2 GetHeadPos() const; // 获取蛇头坐标
+	std::pair<int, int> GetHeadPos() const; // 获取蛇头坐标
 
 	SnakeNode* GetHeadNode() const; // 获取蛇头结点
 
 	int GetLength() const; // 获取蛇的长度
 
-	ImVec2 GetHeadNextPos() const; // 获取下一次移动蛇头位置
+	std::pair<int, int> GetHeadNextPos() const; // 获取下一次移动蛇头位置
 
 	// ... 其他方法
 

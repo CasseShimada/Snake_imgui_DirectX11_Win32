@@ -1,6 +1,7 @@
-#include "imgui.h"
+﻿#include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+#include "Game.h"
 #include <d3d11.h>
 #include <tchar.h>
 
@@ -23,12 +24,12 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int main()
 {
-    // Create application window
+    // 创建应用窗口
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
     HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Snake", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
-    // Initialize Direct3D
+    // 初始化 Direct3D
     if (!CreateDeviceD3D(hwnd))
     {
         CleanupDeviceD3D();
@@ -36,11 +37,53 @@ int main()
         return 1;
     }
 
-    // Show the window
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
+    // 显示应用窗口
+    ::ShowWindow(hwnd, SW_HIDE);
     ::UpdateWindow(hwnd);
 
-    system("pause");
+    // 设置 Dear ImGui 上下文
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // 开启键盘控制
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // 开启手柄控制
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // 开启窗口折叠
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // 开启多视口
+
+    // 设置 Dear ImGui 样式
+    ImGui::StyleColorsLight(); // 日间模式
+
+    // 设置平台后端
+    ImGui_ImplWin32_Init(hwnd);
+    // 设置渲染器后端
+    ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+    // 加载字体
+    ImFont* sourceHanSansChineseFull = io.Fonts->AddFontFromFileTTF("C:/Users/Admin/Documents/SourceHanSansHWSC/OTF/SimplifiedChineseHW/SourceHanSansHWSC-Bold.otf", 25.0f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+    io.Fonts->Build();
+    IM_ASSERT(sourceHanSansChineseFull != nullptr);
+
+    // 创建 Game 对象
+    Game game;
+
+
+    // 主循环
+    bool done = false;
+    while (!done)
+    {
+
+    }
+
+    // 清除
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    CleanupDeviceD3D();
+    ::DestroyWindow(hwnd);
+    ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+
+    return 0;
 }
 
 // Helper functions

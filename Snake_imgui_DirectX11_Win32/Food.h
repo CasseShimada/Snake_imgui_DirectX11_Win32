@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "imgui.h"
 #include "Snake.h"
+
+class Snake;
 
 class Food
 {
@@ -10,10 +11,10 @@ public:
 
 	void RefreshFood(Snake&); // 刷新食物位置
 
-	ImVec2 GetFoodPosition() const; // 获取食物位置
+	std::pair<int, int> GetFoodPosition() const; // 获取食物位置
 
 private:
 
-	ImVec2 foodPosition; // 食物位置
+	std::pair<int, int> foodPosition; // 食物位置
 
 };

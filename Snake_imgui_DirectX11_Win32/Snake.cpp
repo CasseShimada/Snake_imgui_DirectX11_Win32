@@ -18,20 +18,20 @@ Snake::Snake() :length(3), direction(RIGHT), speed(1.0f)
 }
 
 // 碰撞检测（撞墙、撞蛇身）
-bool Snake::CheckCollision()
+bool Snake::CheckCollision(std::pair<int, int> grid)
 {
-	ImVec2 headPos = GetHeadPos();
+	std::pair<int, int> headPos = GetHeadPos();
 
 	// 1. 蛇头与墙壁的碰撞
-	if (headPos.x < 0 || headPos.x >= GRID_WIDTH - 1 ||
-		headPos.y < 0 || headPos.y >= GRID_HEIGHT - 1) {
+	if (headPos.first < 0 || headPos.first >= grid.first ||
+		headPos.second < 0 || headPos.second >= grid.second) {
 		return true; // 撞墙
 	}
 
 	// 2. 蛇头与自身的碰撞
 	SnakeNode* current = head->next; // 从第二个节点开始遍历
 	while (current != nullptr) {
-		if (current->x == headPos.x && current->y == headPos.y) {
+		if (current->x == headPos.first && current->y == headPos.second) {
 			return true; // 撞到自己
 		}
 		current = current->next;
@@ -41,10 +41,10 @@ bool Snake::CheckCollision()
 }
 
 // 蛇移动
-void Snake::Move(ImVec2 nextHeadPos)
+void Snake::Move(std::pair<int, int> nextHeadPos)
 {
-	SnakeNode* newHead = new SnakeNode{ static_cast<int>(nextHeadPos.x),
-				static_cast<int>(nextHeadPos.y), nullptr };
+	SnakeNode* newHead = new SnakeNode{ static_cast<int>(nextHeadPos.first),
+				static_cast<int>(nextHeadPos.second), nullptr };
 
 	newHead->next = head; // 将新头节点连接到当前头节点之前
 	head = newHead; // 更新头节点为新头节点
@@ -94,10 +94,10 @@ void Snake::Move(ImVec2 nextHeadPos)
 //}
 
 // 蛇生长
-void Snake::Grow(ImVec2& next)
+void Snake::Grow(std::pair<int, int>& next)
 {
-	SnakeNode* newHead = new SnakeNode{ static_cast<int>(next.x),
-		static_cast<int>(next.y), nullptr };
+	SnakeNode* newHead = new SnakeNode{ static_cast<int>(next.first),
+		static_cast<int>(next.second), nullptr };
 
 	newHead->next = head; // 将新头节点连接到当前头节点之前
 	head = newHead; // 更新头节点为新头节点
@@ -106,9 +106,9 @@ void Snake::Grow(ImVec2& next)
 }
 
 // 获取蛇头坐标
-ImVec2 Snake::GetHeadPos() const
+std::pair<int, int> Snake::GetHeadPos() const
 {
-	return ImVec2(head->x, head->y);
+	return std::pair<int, int>(head->x, head->y);
 }
 
 // 获取蛇头结点
@@ -124,27 +124,27 @@ int Snake::GetLength() const
 }
 
 // 获取下一次移动蛇头位置
-ImVec2 Snake::GetHeadNextPos() const
+std::pair<int, int> Snake::GetHeadNextPos() const
 {
-	ImVec2 nextHeadPos = GetHeadPos(); // 获取当前蛇头坐标
+	std::pair<int, int> nextHeadPos = GetHeadPos(); // 获取当前蛇头坐标
 
 	// 计算下一步蛇头坐标
 	switch (direction) {
 	case UP:
-		nextHeadPos.x = head->x;
-		nextHeadPos.y = head->y - 1; // 向上移动，y 坐标减 1
+		nextHeadPos.first = head->x;
+		nextHeadPos.second = head->y - 1; // 向上移动，y 坐标减 1
 		break;
 	case DOWN:
-		nextHeadPos.x = head->x;
-		nextHeadPos.y = head->y + 1; // 向下移动，y 坐标加 1
+		nextHeadPos.first = head->x;
+		nextHeadPos.second = head->y + 1; // 向下移动，y 坐标加 1
 		break;
 	case LEFT:
-		nextHeadPos.x = head->x - 1; // 向左移动，x 坐标减 1
-		nextHeadPos.y = head->y;
+		nextHeadPos.first = head->x - 1; // 向左移动，x 坐标减 1
+		nextHeadPos.second = head->y;
 		break;
 	case RIGHT:
-		nextHeadPos.x = head->x + 1; // 向右移动，x 坐标加 1
-		nextHeadPos.y = head->y;
+		nextHeadPos.first = head->x + 1; // 向右移动，x 坐标加 1
+		nextHeadPos.second = head->y;
 		break;
 	}
 
