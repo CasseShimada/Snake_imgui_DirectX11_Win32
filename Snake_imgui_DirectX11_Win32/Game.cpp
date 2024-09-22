@@ -125,13 +125,11 @@ void Game::DrawGrid(int cell_size, int x, int y, const ImU32 color,
 	ImVec2 bottom_right = ImVec2(windowPos.x + (x + 1) * cell_size,
 		windowPos.y + (y + 1) * cell_size);
 
-	const ImU32 color_int = ImColor(color);
-
 	ImDrawList* draw = ImGui::GetWindowDrawList();
 	if (filled)
-		draw->AddRectFilled(top_left, bottom_right, color_int);
+		draw->AddRectFilled(top_left, bottom_right, color);
 	else
-		draw->AddRect(top_left, bottom_right, color_int);
+		draw->AddRect(top_left, bottom_right, color);
 }
 
 void Game::DrawSnake()
