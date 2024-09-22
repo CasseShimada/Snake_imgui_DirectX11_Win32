@@ -38,7 +38,7 @@ int main(int, char**)
 	//ImGui_ImplWin32_EnableDpiAwareness();
 	WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
 	::RegisterClassExW(&wc);
-	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX11 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+	HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"贪吃蛇", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
 	// Initialize Direct3D
 	if (!CreateDeviceD3D(hwnd))
@@ -58,7 +58,7 @@ int main(int, char**)
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+	//io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
@@ -94,12 +94,13 @@ int main(int, char**)
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-	// 创建 Game 对象
-	Game game;
+	Game* game = new Game();
 
 	// 游戏设置
 	int speed = 0; // 速度
 	bool gameStart = false; // 游戏是否开始
+	std::pair<int, int> grid_size = std::pair<int, int>(20,20); // 舞台尺寸
+	int cell_size = 15; // 格子大小
 
 	// Main loop
 	bool done = false;
@@ -142,28 +143,46 @@ int main(int, char**)
 
 		// ———————————————————————— 自定义窗口 ————————————————————————
 
-		ImGui::SetNextWindowSize(ImVec2(1000.0f, 900.0f));
-		if (ImGui::Begin(_S("贪吃蛇"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
-			// 主界面、设置
-			ImGui::SliderInt(_S("速度"), &speed, 1, 5);
-			ImGui::Checkbox(_S("游戏状态"), &gameStart);
+		ImGui::SetNextWindowSize(ImVec2(600.0f, 600.0f));
+		if (gameStart == false)
+		{
+			if (ImGui::Begin(_S("游戏设置"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+				// 主界面、设置
+				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 10, 30);
+				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 10, 30);
+				ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
 
-			if (ImGui::Button(_S("开始游戏")))
-			{
-				gameStart = true;
-			}
+				ImGui::SliderInt(_S("速度"), &speed, 1, 5);
 
-		}ImGui::End();
+				ImGui::Checkbox(_S("游戏状态"), &gameStart);
+				if (ImGui::Button(_S("开始游戏")))
+				{
+					gameStart = true;
+				}
+
+			}ImGui::End();
+		}
 
 		if (gameStart == true)
 		{
-			ImGui::SetNextWindowSize(ImVec2(500.0f, 500.0f));
-			if (ImGui::Begin(_S("游戏"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+
+			ImGui::SetNextWindowSize(ImVec2(static_cast<float>(grid_size.first * cell_size),
+				static_cast<float>(grid_size.second * cell_size)));
+			if (ImGui::Begin(_S("舞台"), NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar)) {
 				// 游戏窗口
+
+				for (int i = 0; i < grid_size.first; i++)
+				{
+					for (int j = 0; j < grid_size.second; j++)
+					{
+						game->drawCell(cell_size, i, j, ImVec4(1, 1, 1, 1), false);
+					}
+				}
 
 			}ImGui::End();
 
 		}
+
 
 		// ———————————————————————— 自定义窗口 ————————————————————————
 

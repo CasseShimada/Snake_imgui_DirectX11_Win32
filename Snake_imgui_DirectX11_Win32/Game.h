@@ -4,8 +4,7 @@
 #include "Food.h"
 #include "Snake.h"
 
-#define GRID_WIDTH 20
-#define GRID_HEIGHT 20
+#include "imgui.h"
 
 class Food;
 class Snake;
@@ -18,6 +17,7 @@ public:
 	Game(); // 构造函数
 	void startGame(); // 游戏开始
 	void endGame(); // 游戏结束
+	void drawCell(int, int, int, const ImVec4, const bool); // 绘制格子
 
 private:
 
