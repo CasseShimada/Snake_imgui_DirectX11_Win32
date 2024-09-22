@@ -94,6 +94,11 @@ int main(int, char**)
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
+	// 预设的颜色选项
+	const char* color_presets[] = {
+	_S("默认"), _S("红色"), _S("绿色"), _S("蓝色"), _S("黄色"), _S("橘黄色"), _S("紫色"), _S("黑色"), _S("白色"), NULL
+	};
+
 	Game* game = new Game();
 
 	// 游戏设置
@@ -103,7 +108,7 @@ int main(int, char**)
 	std::pair<int, int> grid_size = std::pair<int, int>(12, 12); // 舞台尺寸
 	int cell_size = 30; // 格子大小
 	ImVec4 grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); // 格子颜色
-	ImVec4 snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); // 格子颜色
+	ImVec4 snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); // 蛇颜色
 
 	// Main loop
 	bool done = false;
@@ -155,8 +160,42 @@ int main(int, char**)
 				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 12, 30);
 				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 12, 30);
 				ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
+
 				ImGui::ColorEdit3(_S("格子颜色"), (float*)&grid_color);
+
+				ImGui::SameLine();
+
+				static int grid_color_preset = 0; // 默认选择第一个颜色
+				if (ImGui::Combo(_S("格子颜色预设"), &grid_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
+					switch (grid_color_preset) {
+					case 0: grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); break; // 默认
+					case 1: grid_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
+					case 2: grid_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
+					case 3: grid_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
+					case 4: grid_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
+					case 5: grid_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
+					case 6: grid_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
+					case 7: grid_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
+					}
+				}
+
 				ImGui::ColorEdit3(_S("蛇颜色"), (float*)&snake_color);
+				ImGui::SameLine();
+
+				static int snake_color_preset = 0; // 默认选择第一个颜色
+				if (ImGui::Combo(_S("蛇颜色预设"), &snake_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
+					switch (snake_color_preset) {
+					case 0: snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); break; // 默认
+					case 1: snake_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
+					case 2: snake_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
+					case 3: snake_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
+					case 4: snake_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
+					case 5: snake_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
+					case 6: snake_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
+					case 7: snake_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
+					}
+				}
+
 
 				ImGui::SliderInt(_S("速度"), &speed, 1, 5);
 
