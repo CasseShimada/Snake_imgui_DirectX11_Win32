@@ -41,19 +41,19 @@ void Game::Update()
 		}
 		if (!pause)
 		{
-			if (direction != DOWN && ImGui::IsKeyDown(ImGuiKey_GamepadDpadUp))
+			if (direction != DOWN && (ImGui::IsKeyDown(ImGuiKey_GamepadDpadUp) || ImGui::IsKeyDown(ImGuiKey_W)))
 			{
 				next_direction = UP;
 			}
-			else if (direction != UP && ImGui::IsKeyDown(ImGuiKey_GamepadDpadDown))
+			else if (direction != UP && (ImGui::IsKeyDown(ImGuiKey_GamepadDpadDown) || ImGui::IsKeyDown(ImGuiKey_S)))
 			{
 				next_direction = DOWN;
 			}
-			else if (direction != RIGHT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadLeft))
+			else if (direction != RIGHT && (ImGui::IsKeyDown(ImGuiKey_GamepadDpadLeft) || ImGui::IsKeyDown(ImGuiKey_A)))
 			{
 				next_direction = LEFT;
 			}
-			else if (direction != LEFT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadRight))
+			else if (direction != LEFT && (ImGui::IsKeyDown(ImGuiKey_GamepadDpadRight) || ImGui::IsKeyDown(ImGuiKey_D)))
 			{
 				next_direction = RIGHT;
 			}
