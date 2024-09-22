@@ -152,8 +152,8 @@ int main(int, char**)
 			if (ImGui::Begin(_S("游戏设置"), NULL, ImGuiWindowFlags_NoResize | // 游戏设置窗口
 				ImGuiWindowFlags_NoCollapse)) {
 
-				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 10, 30);
-				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 10, 30);
+				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 12, 30);
+				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 12, 30);
 				ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
 				ImGui::ColorEdit3(_S("格子颜色"), (float*)&grid_color);
 				ImGui::ColorEdit3(_S("蛇颜色"), (float*)&snake_color);

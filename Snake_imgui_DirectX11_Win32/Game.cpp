@@ -189,10 +189,10 @@ void Game::RefreshFood()
 
 	std::random_device rd;  // 获取随机数种子
 	std::mt19937 gen(rd()); // 创建随机数生成器
-	//std::uniform_int_distribution<> dis_x(0, game_settings.grid_size.first);
-	//std::uniform_int_distribution<> dis_y(0, game_settings.grid_size.second);
-	std::uniform_int_distribution<> dis_x(0, 20);
-	std::uniform_int_distribution<> dis_y(0, 20);
+	std::uniform_int_distribution<> dis_x(0, game_settings.grid_size.first - 1);
+	std::uniform_int_distribution<> dis_y(0, game_settings.grid_size.second - 1);
+	//std::uniform_int_distribution<> dis_x(0, 20);
+	//std::uniform_int_distribution<> dis_y(0, 20);
 
 	// 生成新的食物坐标
 	std::pair<int, int> new_food_pos = std::pair<int, int>(dis_x(gen), dis_y(gen));
