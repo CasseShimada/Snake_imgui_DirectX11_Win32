@@ -2,7 +2,7 @@
 #include <random>
 
 // 构造函数
-Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), snake_color(0), direction(RIGHT), pause(false)
+Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), snake_color(0), direction(RIGHT), next_direction(direction), pause(false)
 {
 
 }
@@ -43,22 +43,23 @@ void Game::Update()
 		{
 			if (direction != DOWN && ImGui::IsKeyDown(ImGuiKey_GamepadDpadUp))
 			{
-				direction = UP;
+				next_direction = UP;
 			}
 			else if (direction != UP && ImGui::IsKeyDown(ImGuiKey_GamepadDpadDown))
 			{
-				direction = DOWN;
+				next_direction = DOWN;
 			}
 			else if (direction != RIGHT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadLeft))
 			{
-				direction = LEFT;
+				next_direction = LEFT;
 			}
 			else if (direction != LEFT && ImGui::IsKeyDown(ImGuiKey_GamepadDpadRight))
 			{
-				direction = RIGHT;
+				next_direction = RIGHT;
 			}
 			if (timer.GetElapsedSeconds() >= snake_move_interval) // 蛇移动
 			{
+				direction = next_direction;
 				timer.Start();
 				// 移动蛇
 				if (CheckSnakeEat()) // 蛇吃到东西

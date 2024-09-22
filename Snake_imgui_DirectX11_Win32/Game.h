@@ -70,5 +70,5 @@ private:
 	bool pause;
 
 	// 玩家控制
-	enum Direction { UP, DOWN, LEFT, RIGHT } direction; // 蛇的移动方向
+	enum Direction { UP, DOWN, LEFT, RIGHT } direction, next_direction; // 蛇的移动方向
 };
