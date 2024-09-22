@@ -2,7 +2,7 @@
 #include <random>
 
 // 构造函数
-Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), snake_color(0), direction(RIGHT), next_direction(direction), pause(false)
+Game::Game() :max_length(0), snake(), food(), gameOver(false), score(0), snake_move_interval(0), grid_color(0), snake_color(0), direction(UP), next_direction(direction), pause(false)
 {
 
 }
@@ -21,6 +21,7 @@ void Game::Reset()
 	gameOver = true;
 	pause = false;
 	score = 0;
+	direction = UP;
 	snake_move_interval = 1.0f / game_settings.speed;
 	max_length = game_settings.grid_size.first * game_settings.grid_size.second;
 	grid_color = ImColor(game_settings.grid_color);

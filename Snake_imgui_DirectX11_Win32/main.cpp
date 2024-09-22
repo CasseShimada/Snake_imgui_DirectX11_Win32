@@ -99,6 +99,10 @@ int main(int, char**)
 	_S("默认"), _S("红色"), _S("绿色"), _S("蓝色"), _S("黄色"), _S("橘黄色"), _S("紫色"), _S("黑色"), _S("白色"), NULL
 	};
 
+	// 开始字符串
+	const char* secret_code = _S("邀请码");
+	char input_buffer[128] = "";
+
 	Game* game = new Game();
 
 	// 游戏设置
@@ -151,63 +155,85 @@ int main(int, char**)
 
 		// ———————————————————————— 自定义窗口 ————————————————————————
 
-		ImGui::SetNextWindowSize(ImVec2(500.0f, 600.0f));
+		ImGui::SetNextWindowSize(ImVec2(600.0f, 600.0f));
 		if (gameStart == false)
 		{
 			if (ImGui::Begin(_S("游戏设置"), NULL, ImGuiWindowFlags_NoResize | // 游戏设置窗口
 				ImGuiWindowFlags_NoCollapse)) {
-
-				ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 12, 30);
-				ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 12, 30);
-				ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
-
-				ImGui::ColorEdit3(_S("格子颜色"), (float*)&grid_color);
-
-				ImGui::SameLine();
-
-				static int grid_color_preset = 0; // 默认选择第一个颜色
-				if (ImGui::Combo(_S("格子颜色预设"), &grid_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
-					switch (grid_color_preset) {
-					case 0: grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); break; // 默认
-					case 1: grid_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
-					case 2: grid_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
-					case 3: grid_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
-					case 4: grid_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
-					case 5: grid_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
-					case 6: grid_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
-					case 7: grid_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
-					}
+				//if (ImGui::CollapsingHeader(_S("舞台设置")))
+				if (ImGui::TreeNodeEx(_S("舞台设置"), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					ImGui::SliderInt(_S("舞台长度"), &grid_size.first, 12, 30);
+					ImGui::SliderInt(_S("舞台宽度"), &grid_size.second, 12, 30);
+					ImGui::SliderInt(_S("格子大小"), &cell_size, 15, 50);
+					ImGui::TreePop();
 				}
 
-				ImGui::ColorEdit3(_S("蛇颜色"), (float*)&snake_color);
-				ImGui::SameLine();
+				if (ImGui::TreeNodeEx(_S("颜色设置"), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					ImGui::ColorEdit3(_S("格子颜色"), (float*)&grid_color);
 
-				static int snake_color_preset = 0; // 默认选择第一个颜色
-				if (ImGui::Combo(_S("蛇颜色预设"), &snake_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
-					switch (snake_color_preset) {
-					case 0: snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); break; // 默认
-					case 1: snake_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
-					case 2: snake_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
-					case 3: snake_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
-					case 4: snake_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
-					case 5: snake_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
-					case 6: snake_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
-					case 7: snake_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
+					ImGui::SameLine();
+
+					static int grid_color_preset = 0; // 默认选择第一个颜色
+					if (ImGui::Combo(_S("格子颜色预设"), &grid_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
+						switch (grid_color_preset) {
+						case 0: grid_color = ImVec4(0.75f, 0.75f, 0.75f, 1.0f); break; // 默认
+						case 1: grid_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
+						case 2: grid_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
+						case 3: grid_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
+						case 4: grid_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
+						case 5: grid_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
+						case 6: grid_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
+						case 7: grid_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); break; // 黑色
+						case 8: grid_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
+						}
 					}
+
+					ImGui::ColorEdit3(_S("蛇颜色"), (float*)&snake_color);
+					ImGui::SameLine();
+
+					static int snake_color_preset = 0; // 默认选择第一个颜色
+					if (ImGui::Combo(_S("蛇颜色预设"), &snake_color_preset, color_presets, IM_ARRAYSIZE(color_presets))) {
+						switch (snake_color_preset) {
+						case 0: snake_color = ImVec4(0.6549f, 0.3843f, 0.2196f, 1.0f); break; // 默认
+						case 1: snake_color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f); break; // 红色
+						case 2: snake_color = ImVec4(0.0f, 1.0f, 0.0f, 1.0f); break; // 绿色
+						case 3: snake_color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break; // 蓝色
+						case 4: snake_color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); break; // 黄色
+						case 5: snake_color = ImVec4(1.0f, 0.647f, 0.0f, 1.0f); break; // 橘黄色
+						case 6: snake_color = ImVec4(0.5f, 0.0f, 0.5f, 1.0f); break; // 紫色
+						case 7: snake_color = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); break; // 黑色
+						case 8: snake_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f); break; // 白色
+						}
+					}
+					ImGui::TreePop();
 				}
 
-
-				ImGui::SliderInt(_S("速度"), &speed, 1, 5);
+				if (ImGui::TreeNodeEx(_S("游戏设置"), ImGuiTreeNodeFlags_DefaultOpen))
+				{
+					ImGui::SliderInt(_S("速度"), &speed, 1, 5);
+					ImGui::TreePop();
+				}
 
 				//ImGui::Checkbox(_S("游戏状态"), &gameStart);
 
-				if (ImGui::Button(_S("开始游戏")))
+				if (ImGui::TreeNodeEx(_S("游戏开始"), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					game->SyncGameSettings(speed, grid_size, cell_size, grid_color, snake_color);
-					game->Reset();
-					gameStart = true;
-					game->Start();
+					ImGui::InputText(_S("请输入邀请码"), input_buffer, IM_ARRAYSIZE(input_buffer));
+					if (ImGui::Button(_S("开始游戏")))
+					{
+						if (strcmp(input_buffer, secret_code) == 0)
+						{
+							game->SyncGameSettings(speed, grid_size, cell_size, grid_color, snake_color);
+							game->Reset();
+							gameStart = true;
+							game->Start();
+						}
+					}
+					ImGui::TreePop();
 				}
+
 
 			}ImGui::End();
 		}
